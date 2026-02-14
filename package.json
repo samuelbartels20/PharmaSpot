@@ -42,6 +42,7 @@
     "lodash": "^4.17.21",
     "macaddress": "^0.5.3",
     "moment": "^2.29.4",
+    "mongodb": "^6.0.0",
     "multer": "^2.0.2",
     "notiflix": "^3.2.5",
     "print-js": "^1.6.0",
