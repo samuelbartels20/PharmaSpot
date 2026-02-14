@@ -1,7 +1,7 @@
 const app = require("express")();
 const server = require("http").Server(app);
 const bodyParser = require("body-parser");
-const Datastore = require("@seald-io/nedb");
+const { getCollection } = require("../db");
 const multer = require("multer");
 const sanitizeFilename = require('sanitize-filename');
 const fs = require("fs");
@@ -17,13 +17,6 @@ const validFileTypes = [
 const maxFileSize = 2097152 //2MB = 2*1024*1024
 const defaultLogoName = "logo";
 const {filterFile} = require('../assets/js/utils');
-const dbPath = path.join(
-    appData,
-    appName,
-    "server",
-    "databases",
-    "settings.db",
-);
 
 const storage = multer.diskStorage({
     destination: path.join(appData, appName, "uploads"),
@@ -43,10 +36,7 @@ app.use(bodyParser.json());
 
 module.exports = app;
 
-let settingsDB = new Datastore({
-    filename: dbPath,
-    autoload: true,
-});
+let settingsDB = getCollection("settings");
 
 settingsDB.ensureIndex({ fieldName: "_id", unique: true });
 /**

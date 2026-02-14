@@ -1,27 +1,16 @@
 const app = require("express")();
 const server = require("http").Server(app);
 const bodyParser = require("body-parser");
-const Datastore = require("@seald-io/nedb");
+const { getCollection } = require("../db");
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const validator = require("validator");
-const path = require("path");
-const dbPath = path.join(
-    process.env.APPDATA,
-    process.env.APPNAME,
-    "server",
-    "databases",
-    "users.db",
-);
 
 app.use(bodyParser.json());
 
 module.exports = app;
 
-let usersDB = new Datastore({
-    filename: dbPath,
-    autoload: true,
-});
+let usersDB = getCollection("users");
 
 usersDB.ensureIndex({ fieldName: "username", unique: true });
 

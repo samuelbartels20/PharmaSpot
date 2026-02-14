@@ -1,7 +1,7 @@
 const app = require("express")();
 const server = require("http").Server(app);
 const bodyParser = require("body-parser");
-const Datastore = require("@seald-io/nedb");
+const { getCollection } = require("../db");
 const async = require("async");
 const sanitizeFilename = require('sanitize-filename');
 const multer = require("multer");
@@ -17,13 +17,6 @@ const maxFileSize = 2097152 //2MB = 2*1024*1024
 const validator = require("validator");
 const appName = process.env.APPNAME;
 const appData = process.env.APPDATA;
-const dbPath = path.join(
-    appData,
-    appName,
-    "server",
-    "databases",
-    "inventory.db",
-);
 
 const storage = multer.diskStorage({
     destination: path.join(appData, appName, "uploads"),
@@ -43,10 +36,7 @@ app.use(bodyParser.json());
 
 module.exports = app;
 
-let inventoryDB = new Datastore({
-    filename: dbPath,
-    autoload: true,
-});
+let inventoryDB = getCollection("inventory");
 
 inventoryDB.ensureIndex({ fieldName: "_id", unique: true });
 

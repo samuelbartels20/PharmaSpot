@@ -4,8 +4,21 @@ const server = http.createServer(express);
 const bodyParser = require("body-parser");
 const rateLimit = require("express-rate-limit");
 const pkg = require("./package.json");
-const {app} = require('electron');
-process.env.APPDATA = app.getPath('appData');
+const { dbConfig } = require("./db.config");
+const { initMongo } = require("./db");
+
+// Decouple from Electron - gracefully fall back when not available
+let isElectron = false;
+try {
+    const { app } = require("electron");
+    if (app) {
+        isElectron = true;
+        process.env.APPDATA = app.getPath("appData");
+    }
+} catch (e) {
+    process.env.APPDATA = process.env.APPDATA || require("os").homedir();
+}
+
 process.env.APPNAME = pkg.name;
 const PORT = process.env.PORT || 0;
 const limiter = rateLimit({
@@ -37,16 +50,40 @@ express.get("/", function (req, res) {
     res.send("POS Server Online.");
 });
 
-express.use("/api/inventory", require("./api/inventory"));
-express.use("/api/customers", require("./api/customers"));
-express.use("/api/categories", require("./api/categories"));
-express.use("/api/settings", require("./api/settings"));
-express.use("/api/users", require("./api/users"));
-express.use("/api", require("./api/transactions"));
+/**
+ * Start the server with optional MongoDB initialization
+ */
+async function startServer() {
+    // Initialize MongoDB if configured
+    if (dbConfig.USE_MONGODB) {
+        try {
+            await initMongo();
+        } catch (error) {
+            console.error('MongoDB initialization failed, falling back to NeDB:', error.message);
+        }
+    }
 
-server.listen(PORT, () => {
-    process.env.PORT = server.address().port;
-    console.log("Listening on PORT", process.env.PORT);
+    // Mount API routes
+    express.use("/api/inventory", require("./api/inventory"));
+    express.use("/api/customers", require("./api/customers"));
+    express.use("/api/categories", require("./api/categories"));
+    express.use("/api/settings", require("./api/settings"));
+    express.use("/api/users", require("./api/users"));
+    express.use("/api", require("./api/transactions"));
+    express.use("/api/dashboard", require("./api/dashboard"));
+
+    // Start server
+    server.listen(PORT, () => {
+        process.env.PORT = server.address().port;
+        console.log("Listening on PORT", process.env.PORT);
+        console.log("Database mode:", dbConfig.USE_MONGODB ? "MongoDB" : "NeDB (local)");
+    });
+}
+
+// Start the server
+startServer().catch(err => {
+    console.error('Failed to start server:', err);
+    process.exit(1);
 });
 
 /**

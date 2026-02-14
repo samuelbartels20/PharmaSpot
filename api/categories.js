@@ -1,27 +1,15 @@
 const app = require("express")();
 const server = require("http").Server(app);
 const bodyParser = require("body-parser");
-const Datastore =  require('@seald-io/nedb');
+const { getCollection } = require("../db");
 const async = require("async");
 const path = require("path");
-const appName = process.env.APPNAME;
-const appData = process.env.APPDATA;
-const dbPath = path.join(
-    appData,
-    appName,
-    "server",
-    "databases",
-    "categories.db",
-);
 
 app.use(bodyParser.json());
 
 module.exports = app;
 
-let categoryDB = new Datastore({
-    filename: dbPath,
-    autoload: true,
-});
+let categoryDB = getCollection("categories");
 
 categoryDB.ensureIndex({ fieldName: "_id", unique: true });
 
