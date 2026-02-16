@@ -29,66 +29,181 @@
         </div>
     </div>
     <div id="main_app">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="button-list pull-left m-t-15 m-l-10">
-                        <div class="btn-group p_one">
-                            <button id="productModal" data-toggle="modal" data-target="#Products" type="button" class="btn btn-success waves-effect waves-light">
-                                <span class="btn-label"><i class="  glyphicon glyphicon-barcode"></i> </span> Products
-                            </button>
-                            <button id="newProductModal" data-toggle="modal" data-target="#newProduct" type="button" class="btn btn-warning waves-effect waves-light">
-                                <i class="fa fa-plus"></i>
-                            </button>
+        <!-- Top Header Bar -->
+        <header class="main-header">
+            <a href="#" class="header-logo">
+                <img src="assets/images/logo.svg" alt="Logo" class="header-logo-img">
+                <span class="header-logo-text">PharmaSpot</span>
+            </a>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="header-right">
+                <span class="header-welcome">Welcome <span id="loggedin-user"></span></span>
+                <button type="button" title="My Profile" class="btn btn-header" id="cashier">
+                    <i class="fa fa-user-circle"></i> Change Password
+                </button>
+                <button id="log-out" type="button" class="btn btn-header btn-logout">
+                    <i class="fa fa-sign-out"></i> Log out
+                </button>
+            </div>
+        </header>
+        <!-- Left Sidebar -->
+        <aside class="main-sidebar" id="mainSidebar">
+            <div class="sidebar-logo">
+                <img src="assets/images/logo.svg" alt="Logo">
+            </div>
+            <div class="sidebar-label">MAIN NAVIGATION</div>
+            <ul class="sidebar-menu">
+                <li class="active" data-view="dashboard_view">
+                    <a href="#"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+                </li>
+                <li data-view="pos_view">
+                    <a href="#"><i class="fa fa-shopping-cart"></i> <span>POS</span></a>
+                </li>
+                <li data-view="transactions_view">
+                    <a href="#" class="p_three"><i class="fa fa-file-text-o"></i> <span>Invoices</span></a>
+                </li>
+                <li data-action="users" class="p_four">
+                    <a href="#"><i class="fa fa-users"></i> <span>System Users</span>
+                        <span class="sidebar-badge" id="userCount"></span></a>
+                </li>
+                <li data-action="customers">
+                    <a href="#"><i class="fa fa-address-book"></i> <span>Customers</span>
+                        <span class="sidebar-badge" id="customerCount"></span></a>
+                </li>
+                <li data-action="soon-expiring">
+                    <a href="#"><i class="fa fa-clock-o"></i> <span>Soon Expiring</span>
+                        <span class="sidebar-badge badge-danger" id="expiringCount"></span></a>
+                </li>
+                <li class="has-submenu p_one">
+                    <a href="#"><i class="fa fa-medkit"></i> <span>Medicine Inventory</span>
+                        <i class="fa fa-angle-down submenu-arrow"></i></a>
+                    <ul class="sidebar-submenu">
+                        <li data-action="products">
+                            <a href="#"><i class="fa fa-list"></i> All Products</a>
+                        </li>
+                        <li data-action="add-product">
+                            <a href="#"><i class="fa fa-plus"></i> Add Product</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="has-submenu p_two">
+                    <a href="#"><i class="fa fa-th"></i> <span>Categories</span>
+                        <i class="fa fa-angle-down submenu-arrow"></i></a>
+                    <ul class="sidebar-submenu">
+                        <li data-action="categories">
+                            <a href="#"><i class="fa fa-list"></i> All Categories</a>
+                        </li>
+                        <li data-action="add-category">
+                            <a href="#"><i class="fa fa-plus"></i> Add Category</a>
+                        </li>
+                    </ul>
+                </li>
+                <li data-action="open-tabs">
+                    <a href="#"><i class="fa fa-shopping-basket"></i> <span>Open Tabs</span></a>
+                </li>
+                <li data-action="orders">
+                    <a href="#"><i class="fa fa-cart-arrow-down"></i> <span>Orders</span></a>
+                </li>
+                <li data-action="settings" class="p_five">
+                    <a href="#"><i class="fa fa-cog"></i> <span>Settings</span></a>
+                </li>
+            </ul>
+        </aside>
+        <!-- Main Content Area -->
+        <div class="content-wrapper">
+            <div class="content-container">
+            <!-- Dashboard View -->
+            <div id="dashboard_view">
+                <div class="content-header">
+                    <h1>Dashboard <small>Control panel</small></h1>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="info-box info-box-green">
+                            <div class="info-box-icon"><i class="fa fa-shopping-bag fa-2x"></i></div>
+                            <div class="info-box-content">
+                                <h3><span id="dashboard-currency-1"></span> <span id="dashboard-total-sales">0</span></h3>
+                                <span>Today's Total Sales</span>
+                            </div>
+                            <div class="info-box-footer">
+                                <a href="#" class="info-box-link" data-view="transactions_view">More info <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
                         </div>
-                        <div class="btn-group p_two">
-                            <button id="categoryModal" data-toggle="modal" data-target="#Categories" type="button" class="btn btn-success waves-effect waves-light">
-                                <span class="btn-label"><i class="glyphicon glyphicon-th"></i> </span> Categories
-                            </button>
-                            <button id="newCategoryModal" data-toggle="modal" data-target="#newCategory" type="button" class="btn btn-warning waves-effect waves-light">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-box info-box-teal">
+                            <div class="info-box-icon"><i class="fa fa-shopping-bag fa-2x"></i></div>
+                            <div class="info-box-content">
+                                <h3><span id="dashboard-transactions">0</span></h3>
+                                <span>Today's Transactions</span>
+                            </div>
+                            <div class="info-box-footer">
+                                <a href="#" class="info-box-link" data-view="transactions_view">More info <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
                         </div>
-                        <button id="viewRefOrders" data-toggle="modal" data-target="#holdOrdersModal" type="button" class="btn btn-info waves-effect waves-light">
-                            <span class="btn-label"><i class="fa fa-shopping-basket"></i> </span> Open Tabs
-                        </button>
-                        <button id="viewCustomerOrders" data-toggle="modal" data-target="#customerModal" type="button" onclick="$(this).getCustomerOrders()" class="btn btn-info waves-effect waves-light">
-                            <span class="btn-label"><i class="fa fa-shopping-cart"></i></span> Orders
-                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-box info-box-red">
+                            <div class="info-box-icon"><i class="fa fa-exclamation-triangle fa-2x"></i></div>
+                            <div class="info-box-content">
+                                <h3><span id="dashboard-expiring">0</span></h3>
+                                <span>Soon Expiring</span>
+                            </div>
+                            <div class="info-box-footer">
+                                <a href="#" class="info-box-link" data-action="soon-expiring">More info <i class="fa fa-arrow-circle-right"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="button-list m-t-15">
-                        <button id="settings" data-toggle="modal" data-target="#settingsModal" type="button" class="btn btn-success waves-effect waves-light p_five">
-                            <i class="glyphicon glyphicon-cog"></i>
-                        </button>
-                        <button id="transactions" type="button" class="btn btn-success waves-effect waves-light p_three">
-                            <span class="btn-label"><i class="  glyphicon glyphicon-credit-card"></i> </span>
-                            Transactions
-                        </button>
-                        <button id="pointofsale" type="button" class="btn btn-success waves-effect waves-light">
-                            <span class="btn-label"><i class="  glyphicon glyphicon-shopping-cart"></i> </span> Point of
-                            Sale
-                        </button>
-                        <div class="btn-group p_four">
-                            <button id="usersModal" data-toggle="modal" data-target="#Users" type="button" class="btn btn-success waves-effect waves-light">
-                                <span class="btn-label"><i class="  glyphicon glyphicon-user"></i> </span> Users
-                            </button>
-                            <button id="add-user" data-toggle="modal" type="button" class="btn btn-warning waves-effect waves-light">
-                                <i class="fa fa-plus"></i>
-                            </button>
+                <div class="row m-t-20">
+                    <div class="col-md-8">
+                        <div class="dashboard-panel">
+                            <div class="panel-heading">
+                                <i class="fa fa-bar-chart"></i> Inventory Summary
+                            </div>
+                            <div class="panel-body">
+                                <table class="table table-striped" id="dashboardInventory">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th>Category</th>
+                                            <th>Stock</th>
+                                            <th>Price</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard_inventory_list"></tbody>
+                                </table>
+                            </div>
                         </div>
-                        <button type="button" title="My Profile" class="btn btn-default waves-effect waves-light" id="cashier">
-                            <span class="btn-label"><i class="glyphicon glyphicon-user"></i> </span> <span id="loggedin-user"></span>
-                        </button>
-                        <button id="log-out" type="button" class="btn btn-warning waves-effect waves-light">
-                            <i class="glyphicon glyphicon-log-out"></i> <span>Log out</span>
-                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dashboard-panel">
+                            <div class="panel-heading panel-heading-info">
+                                <i class="fa fa-clock-o"></i> Expiring Soon
+                            </div>
+                            <div class="panel-body" id="dashboard_expiring_list">
+                                <p class="text-muted">No items expiring soon.</p>
+                            </div>
+                        </div>
+                        <div class="dashboard-panel m-t-15">
+                            <div class="panel-heading panel-heading-warning">
+                                <i class="fa fa-exclamation-circle"></i> Low Stock Alert
+                            </div>
+                            <div class="panel-body" id="dashboard_lowstock_list">
+                                <p class="text-muted">No low stock items.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div id="transactions_view">
-                <div class="container">
+                <div class="content-header">
+                    <h1>Transactions</h1>
+                </div>
+                <div class="container-fluid">
                     <div class="row text-center m-t-20" id="totals">
                         <div id="total_sales" class="col-md-3 py-2 bg-success">
                             <h5>SALES</h5>
@@ -192,7 +307,10 @@
                 </div>
             </div>
             <div id="pos_view">
-                <div class="row m-t-20">
+                <div class="content-header">
+                    <h1>Point of Sale</h1>
+                </div>
+                <div class="row">
                     <div class="col-md-6">
                         <div class="card-box" id="card-box">
                             <div class="col-md-12">
@@ -286,7 +404,9 @@
                     </div>
                 </div>
             </div>
-        </div>
+            </div>
+            </div><!-- /.content-container -->
+        </div><!-- /.content-wrapper -->
         <div id="dueModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-sm">
                 <div class="modal-content">

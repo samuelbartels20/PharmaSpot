@@ -263,6 +263,218 @@ if (auth == undefined) {
       $(".p_five").hide();
     }
 
+    // =============================================
+    // SIDEBAR NAVIGATION
+    // =============================================
+
+    // Toggle sidebar
+    $("#sidebarToggle").on("click", function () {
+      $("body").toggleClass("sidebar-collapsed");
+    });
+
+    // Submenu toggle
+    $(".has-submenu > a").on("click", function (e) {
+      e.preventDefault();
+      $(this).parent().toggleClass("open");
+    });
+
+    // View switching
+    function switchView(viewName) {
+      $("#dashboard_view, #pos_view, #transactions_view").hide();
+      $("#" + viewName).show();
+      // Update active sidebar item
+      $(".sidebar-menu li").removeClass("active");
+      $(".sidebar-menu li[data-view='" + viewName + "']").addClass("active");
+    }
+
+    // Sidebar navigation click handlers
+    $(".sidebar-menu li[data-view]").on("click", function (e) {
+      e.preventDefault();
+      let view = $(this).data("view");
+      if (view === "transactions_view") {
+        loadTransactions();
+        loadUserList();
+      }
+      if (view === "dashboard_view") {
+        loadDashboard();
+      }
+      switchView(view);
+    });
+
+    // Dashboard info-box links
+    $(".info-box-link[data-view]").on("click", function (e) {
+      e.preventDefault();
+      let view = $(this).data("view");
+      if (view === "transactions_view") {
+        loadTransactions();
+        loadUserList();
+      }
+      switchView(view);
+    });
+
+    // Sidebar action handlers
+    $(".sidebar-menu li[data-action]").on("click", function (e) {
+      e.preventDefault();
+      let action = $(this).data("action");
+      switch (action) {
+        case "products":
+          $("#Products").modal("show");
+          break;
+        case "add-product":
+          $("#saveProduct").get(0).reset();
+          $("#current_img").text("");
+          $("#product_id").val("");
+          $("#img").val("");
+          $("#remove_img").val("");
+          $("#rmv_img").hide();
+          $("#newProduct").modal("show");
+          break;
+        case "categories":
+          $("#Categories").modal("show");
+          break;
+        case "add-category":
+          $("#saveCategory").get(0).reset();
+          $("#category_id").val("");
+          $("#newCategory").modal("show");
+          break;
+        case "users":
+          $("#Users").modal("show");
+          break;
+        case "settings":
+          $("#settingsModal").modal("show");
+          break;
+        case "open-tabs":
+          $("#holdOrdersModal").modal("show");
+          setTimeout(function () { $("#holdOrderInput").focus(); }, 500);
+          break;
+        case "orders":
+          $(this).getCustomerOrders();
+          $("#customerModal").modal("show");
+          setTimeout(function () { $("#holdCustomerOrderInput").focus(); }, 500);
+          break;
+        case "customers":
+          $("#newCustomer").modal("show");
+          break;
+        case "soon-expiring":
+          switchView("dashboard_view");
+          loadDashboard();
+          break;
+      }
+    });
+
+    // =============================================
+    // DASHBOARD
+    // =============================================
+
+    function loadDashboard() {
+      // Update currency symbols
+      if (settings) {
+        let sym = validator.unescape(settings.symbol) + " ";
+        $("#dashboard-currency-1").text(sym);
+      }
+
+      // Load today's sales from dashboard API
+      $.get(api + "dashboard/summary", function (data) {
+        if (data) {
+          $("#dashboard-total-sales").text(moneyFormat(data.totalSales || 0));
+          $("#dashboard-transactions").text(data.totalTransactions || 0);
+        }
+      }).fail(function () {
+        // Fallback: try to compute from transactions 
+        $("#dashboard-total-sales").text("0");
+        $("#dashboard-transactions").text("0");
+      });
+
+      // Sidebar badge counts
+      if (allUsers.length > 0) {
+        $("#userCount").text(allUsers.length);
+      }
+
+      // Load inventory for dashboard table
+      $.get(api + "inventory/products", function (products) {
+        let expiringCount = 0;
+        let lowStockCount = 0;
+        let expiringHtml = "";
+        let lowStockHtml = "";
+        let inventoryHtml = "";
+
+        products.forEach(function (product) {
+          let stockStatus = getStockStatus(product.quantity, product.minStock);
+          let stockLabel, stockClass;
+          if (stockStatus === 0) {
+            stockLabel = "Out of Stock";
+            stockClass = "stock-out";
+            lowStockCount++;
+          } else if (stockStatus === -1) {
+            stockLabel = "Low Stock";
+            stockClass = "stock-low";
+            lowStockCount++;
+            lowStockHtml += `<div class="lowstock-item">
+              <i class="fa fa-exclamation-circle"></i>
+              <span>${product.name}</span>
+              <span class="qty text-warning">${product.quantity} left</span>
+            </div>`;
+          } else {
+            stockLabel = "In Stock";
+            stockClass = "stock-ok";
+          }
+
+          // Check expiration
+          let daysLeft = daysToExpire(product.expirationDate);
+          if (daysLeft > 0 && daysLeft <= 30) {
+            expiringCount++;
+            let daysNoun = daysLeft > 1 ? "days" : "day";
+            expiringHtml += `<div class="expiring-item">
+              <i class="fa fa-clock-o"></i>
+              <span>${product.name}</span>
+              <span class="days">${daysLeft} ${daysNoun}</span>
+            </div>`;
+          } else if (daysLeft === 0 && isExpired(product.expirationDate)) {
+            expiringCount++;
+            expiringHtml += `<div class="expiring-item">
+              <i class="fa fa-times-circle"></i>
+              <span class="text-danger">${product.name}</span>
+              <span class="days">Expired</span>
+            </div>`;
+          }
+
+          // Category name lookup
+          let catName = "";
+          allCategories.forEach(function (cat) {
+            if (String(cat._id) === String(product.category)) {
+              catName = cat.name;
+            }
+          });
+
+          inventoryHtml += `<tr>
+            <td>${product.name}</td>
+            <td>${catName}</td>
+            <td>${product.stock == 1 ? product.quantity : "N/A"}</td>
+            <td>${settings ? validator.unescape(settings.symbol) : ""}${moneyFormat(product.price)}</td>
+            <td><span class="stock-badge ${stockClass}">${stockLabel}</span></td>
+          </tr>`;
+        });
+
+        $("#dashboard_inventory_list").html(inventoryHtml || '<tr><td colspan="5" class="text-center">No products found</td></tr>');
+        $("#dashboard_expiring_list").html(expiringHtml || '<p class="text-muted">No items expiring soon.</p>');
+        $("#dashboard_lowstock_list").html(lowStockHtml || '<p class="text-muted">All items are well stocked.</p>');
+        $("#dashboard-expiring").text(expiringCount);
+        $("#expiringCount").text(expiringCount > 0 ? expiringCount : "");
+
+        // Customer count badge
+        $.get(api + "customers/all", function (customers) {
+          if (customers && customers.length > 0) {
+            $("#customerCount").text(customers.length);
+          }
+        });
+      });
+    }
+
+    // Load dashboard on startup
+    setTimeout(function () {
+      loadDashboard();
+    }, 2000);
+
     function loadProducts() {
       $.get(api + "inventory/products", function (data) {
         data.forEach((item) => {
@@ -1210,17 +1422,11 @@ if (auth == undefined) {
       loadTransactions();
       loadUserList();
 
-      $("#pos_view").hide();
-      $("#pointofsale").show();
-      $("#transactions_view").show();
-      $(this).hide();
+      switchView('transactions_view');
     });
 
     $("#pointofsale").on("click", function () {
-      $("#pos_view").show();
-      $("#transactions").show();
-      $("#transactions_view").hide();
-      $(this).hide();
+      switchView('pos_view');
     });
 
     $("#viewRefOrders").on("click", function () {

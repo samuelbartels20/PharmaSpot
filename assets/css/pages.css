@@ -1,5 +1,472 @@
 
-#transactions_view, #pointofsale {
+/* =============================================
+   SIDEBAR + HEADER LAYOUT
+============================================= */
+
+/* Top Header */
+.main-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: #3c8dbc;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  z-index: 1030;
+  padding: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  background: #367fa9;
+  height: 50px;
+  width: 230px;
+  padding: 0 15px;
+  text-decoration: none;
+  color: #fff;
+  flex-shrink: 0;
+  transition: width 0.3s;
+}
+
+.header-logo-img {
+  height: 30px;
+  margin-right: 10px;
+}
+
+.header-logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-toggle {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+  height: 50px;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(0,0,0,0.1);
+}
+
+.header-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  padding-right: 15px;
+  gap: 8px;
+}
+
+.header-welcome {
+  font-size: 14px;
+  margin-right: 10px;
+}
+
+.btn-header {
+  background: none;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-header:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+
+.btn-logout {
+  background: #dd4b39;
+  border-color: #dd4b39;
+}
+
+.btn-logout:hover {
+  background: #c23321;
+  border-color: #c23321;
+}
+
+/* Left Sidebar */
+.main-sidebar {
+  position: fixed;
+  top: 50px;
+  left: 0;
+  bottom: 0;
+  width: 230px;
+  background: #222d32;
+  z-index: 1020;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width 0.3s, transform 0.3s;
+}
+
+.main-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.main-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+}
+
+.sidebar-logo {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-logo img {
+  max-height: 45px;
+  filter: brightness(0) invert(1);
+  opacity: 0.8;
+}
+
+.sidebar-label {
+  color: #4b646f;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 12px 15px 6px;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li > a {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: #b8c7ce;
+  text-decoration: none;
+  font-size: 14px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.sidebar-menu li > a > .fa {
+  width: 22px;
+  text-align: center;
+  margin-right: 10px;
+  font-size: 15px;
+}
+
+.sidebar-menu li > a:hover {
+  background: #1e282c;
+  color: #fff;
+  border-left-color: #3c8dbc;
+}
+
+.sidebar-menu li.active > a {
+  background: #1e282c;
+  color: #fff;
+  border-left-color: #3c8dbc;
+}
+
+.sidebar-badge {
+  margin-left: auto;
+  background: #3c8dbc;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+  min-width: 18px;
+  text-align: center;
+}
+
+.sidebar-badge.badge-danger {
+  background: #dd4b39;
+}
+
+.sidebar-badge:empty {
+  display: none;
+}
+
+.submenu-arrow {
+  margin-left: auto;
+  transition: transform 0.2s;
+}
+
+.has-submenu.open .submenu-arrow {
+  transform: rotate(180deg);
+}
+
+.sidebar-submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #2c3b41;
+  display: none;
+}
+
+.has-submenu.open .sidebar-submenu {
+  display: block;
+}
+
+.sidebar-submenu li > a {
+  padding: 8px 15px 8px 48px;
+  font-size: 13px;
+  color: #8aa4af;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.sidebar-submenu li > a > .fa {
+  width: 18px;
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+.sidebar-submenu li > a:hover {
+  color: #fff;
+  background: #1a2226;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  margin-left: 230px;
+  margin-top: 50px;
+  min-height: calc(100vh - 50px);
+  background: #ecf0f5;
+  transition: margin-left 0.3s;
+  padding: 15px;
+}
+
+.content-container {
+  max-width: 100%;
+}
+
+/* Sidebar collapsed state */
+.sidebar-collapsed .main-sidebar {
+  width: 50px;
+}
+
+.sidebar-collapsed .main-sidebar .sidebar-logo,
+.sidebar-collapsed .main-sidebar .sidebar-label,
+.sidebar-collapsed .main-sidebar li > a > span,
+.sidebar-collapsed .main-sidebar .submenu-arrow,
+.sidebar-collapsed .main-sidebar .sidebar-badge,
+.sidebar-collapsed .main-sidebar .sidebar-submenu {
+  display: none;
+}
+
+.sidebar-collapsed .main-sidebar li > a {
+  justify-content: center;
+  padding: 12px;
+}
+
+.sidebar-collapsed .main-sidebar li > a > .fa {
+  margin-right: 0;
+  font-size: 17px;
+}
+
+.sidebar-collapsed .content-wrapper {
+  margin-left: 50px;
+}
+
+.sidebar-collapsed .header-logo {
+  width: 50px;
+}
+
+.sidebar-collapsed .header-logo-text {
+  display: none;
+}
+
+/* Content header */
+.content-header {
+  margin: -15px -15px 15px -15px;
+  padding: 12px 20px;
+  background: #fff;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.content-header h1 {
+  font-size: 22px;
+  margin: 0;
+  color: #333;
+  font-weight: 400;
+}
+
+.content-header h1 small {
+  font-size: 13px;
+  color: #888;
+  margin-left: 8px;
+}
+
+/* =============================================
+   DASHBOARD
+============================================= */
+
+#dashboard_view {
+  display: block;
+}
+
+.info-box {
+  border-radius: 4px;
+  color: #fff;
+  margin-bottom: 15px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.info-box-green {
+  background: #00a65a;
+}
+
+.info-box-teal {
+  background: #3c8dbc;
+}
+
+.info-box-red {
+  background: #dd4b39;
+}
+
+.info-box-icon {
+  padding: 20px 20px 0;
+}
+
+.info-box-content {
+  padding: 5px 20px 10px;
+}
+
+.info-box-content h3 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+}
+
+.info-box-content span {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.info-box-footer {
+  background: rgba(0,0,0,0.1);
+  padding: 6px 20px;
+}
+
+.info-box-link {
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.info-box-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.dashboard-panel {
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.panel-heading {
+  background: #3c8dbc;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.panel-heading-info {
+  background: #00c0ef;
+}
+
+.panel-heading-warning {
+  background: #f39c12;
+}
+
+.panel-body {
+  padding: 15px;
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.panel-body .table {
+  margin-bottom: 0;
+}
+
+.stock-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.stock-ok { background: #00a65a; }
+.stock-low { background: #f39c12; }
+.stock-out { background: #dd4b39; }
+
+.expiring-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.expiring-item:last-child {
+  border-bottom: none;
+}
+
+.expiring-item .fa {
+  color: #dd4b39;
+  margin-right: 10px;
+}
+
+.expiring-item .days {
+  margin-left: auto;
+  font-size: 12px;
+  color: #dd4b39;
+  font-weight: 600;
+}
+
+.lowstock-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.lowstock-item:last-child {
+  border-bottom: none;
+}
+
+.lowstock-item .fa {
+  color: #f39c12;
+  margin-right: 10px;
+}
+
+.lowstock-item .qty {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+/* =============================================
+   VIEWS
+============================================= */
+
+#transactions_view, #pos_view {
   display: none;
 }
 
@@ -182,15 +649,19 @@ overflow-y:scroll
 }
 
 #login {
-/*  background: radial-gradient(circle, rgba(153,153,153,1) 0%, rgba(221,221,221,1)  100%); */
-/*  background-image: url(../../assets/images/logo.svg);*/
-    min-height: 250px;
+    background: radial-gradient(circle, #81c868 0%, #eee 100%);
+    min-height: 100vh;
     padding: 15px;
     margin-right: auto;
     margin-left: auto;
     padding-left: 15px;
     padding-right: 15px;
-    z-index: 999;
+    z-index: 1050;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 
