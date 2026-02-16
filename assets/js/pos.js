@@ -2401,5 +2401,8 @@ $("#quit").on("click", function () {
 });
 
 ipcRenderer.on("click-element", (event, elementId) => {
-  document.getElementById(elementId).click();
+  const element = document.getElementById(elementId);
+  if (element) {
+    $(element).show().trigger('click');
+  }
 });
