@@ -2403,7 +2403,6 @@ $("#quit").on("click", function () {
 ipcRenderer.on("click-element", (event, elementId) => {
   const element = document.getElementById(elementId);
   if (element) {
-    $(element).show();
-    element.click();
+    $(element).show().trigger('click');
   }
 });
